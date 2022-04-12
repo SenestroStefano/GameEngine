@@ -35,8 +35,6 @@ class Delay():
             self.__min = 0
             self.__flag = True
 
-        #print(int(self.__min))
-
     def Infinite(self):
         self.ReStart()
         self.Start()
@@ -79,24 +77,55 @@ class Delay_noEvent():
 class DO():
     def __init__(self):
         self.__flagOnce = True
+        self.__min = 0
 
     def Once(self, event):
         if self.__flagOnce:
             self.__flagOnce = False
             event()
-            
 
+    def Times(self, times, event):
+        if self.__min < times:
+            self.__min += 1
+            event()
+
+
+class FLIP_FLOP():
+    def __init__(self):
+        self.__flagOnce = False
+        self.__min = 0
+
+
+    def AfterOnce(self, event):
+        if self.__flagOnce:
+            self.__flagOnce = False
+            event()
+        else:
+            self.__flagOnce = True
+
+    def AfterTimes(self, times, event):
+        if self.__min < times:
+            self.__min += 1
+        else:
+            event()
+            self.__min = 0
+
+Do = DO()
+FlipFlop = FLIP_FLOP()
 
 def MiaFunzione():
     print("Ciao")
 
 def testa():
-    Do = DO()
+    x = 0
     while True:
 
 
         #delay.ActualState()
-        Do.Once(MiaFunzione)
+        #lambda: print("Bella")
+        FlipFlop.AfterTimes(20, lambda: print("Bella"+str(x)))
+        x += 1
+
 
         clock.tick(FPS)
 
